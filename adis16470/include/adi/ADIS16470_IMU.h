@@ -341,14 +341,16 @@ class ADIS16470_IMU : public GyroBase {
   bool m_auto_configured = false;
   SPI::Port m_spi_port;
   uint16_t m_calibration_time;
-  SPI *m_spi = nullptr;
-  DigitalInput *m_auto_interrupt = nullptr;
   double m_scaled_sample_rate = 2500.0; // Default sample rate setting
   
   std::thread m_acquire_task;
 
   mutable wpi::mutex m_mutex;
 
+  std::unique_ptr<SPI> m_spi;
+  std::unique_ptr<DigitalInput> m_auto_interrupt;
+  std::unique_ptr<DigitalInput> m_reset_in;
+  std::unique_ptr<DigitalOutput> m_imu_ready;
 };
 
 } //namespace frc

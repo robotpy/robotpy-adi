@@ -62,7 +62,7 @@ ADIS16470_IMU::ADIS16470_IMU(IMUAxis yaw_axis, SPI::Port port, ADIS16470Calibrat
   DigitalOutput *m_reset_out = new DigitalOutput(27);  // Drive SPI CS2 (IMU RST) low
   Wait(0.01);  // Wait 10ms
   delete m_reset_out;
-  new DigitalInput(27);  // Set SPI CS2 (IMU RST) high
+  m_reset_in = std::make_unique<DigitalInput>(27);  // Set SPI CS2 (IMU RST) high
   Wait(0.5); // Wait 500ms for reset to complete
 
   // Configure standard SPI
@@ -97,7 +97,7 @@ ADIS16470_IMU::ADIS16470_IMU(IMUAxis yaw_axis, SPI::Port port, ADIS16470Calibrat
   DriverStation::ReportWarning("ADIS16470 IMU Successfully Initialized!");
 
   // Drive SPI CS3 (IMU ready LED) low (active low)
-  new DigitalOutput(28); 
+  m_imu_ready = std::make_unique<DigitalOutput>(28);
 
   // Report usage and post data to DS
   HAL_Report(HALUsageReporting::kResourceType_ADIS16470, 0);
@@ -123,7 +123,7 @@ bool ADIS16470_IMU::SwitchToStandardSPI(){
     }
     std::cout << "Paused the IMU processing thread successfully!" << std::endl;
     // Maybe we're in auto SPI mode? If so, kill auto SPI, and then SPI.
-    if (m_spi != nullptr && m_auto_configured) {
+    if (m_spi && m_auto_configured) {
       m_spi->StopAuto();
       // We need to get rid of all the garbage left in the auto SPI buffer after stopping it.
       // Sometimes data magically reappears, so we have to check the buffer size a couple of times
@@ -141,9 +141,9 @@ bool ADIS16470_IMU::SwitchToStandardSPI(){
       }
   }
   // There doesn't seem to be a SPI port active. Let's try to set one up
-  if (m_spi == nullptr) {
+  if (!m_spi) {
     std::cout << "Setting up a new SPI port." << std::endl;
-    m_spi = new SPI(m_spi_port);
+    m_spi = std::make_unique<SPI>(m_spi_port);
     m_spi->SetClockRate(2000000);
     m_spi->SetMSBFirst();
     m_spi->SetSampleDataOnTrailingEdge();
@@ -190,15 +190,15 @@ bool ADIS16470_IMU::SwitchToStandardSPI(){
 bool ADIS16470_IMU::SwitchToAutoSPI(){
 
   // No SPI port has been set up. Go set one up first.
-  if(m_spi == nullptr){
+  if(!m_spi){
     if(!SwitchToStandardSPI()){
       DriverStation::ReportError("Failed to start/restart auto SPI");
       return false;
     }
   }
   // Only set up the interrupt if needed.
-  if (m_auto_interrupt == nullptr) {
-    m_auto_interrupt = new DigitalInput(26);
+  if (!m_auto_interrupt) {
+    m_auto_interrupt = std::make_unique<DigitalInput>(26);
   }
   // The auto SPI controller gets angry if you try to set up two instances on one bus.
   if (!m_auto_configured) {
@@ -393,17 +393,13 @@ void ADIS16470_IMU::Close() {
     m_thread_active = false;
     if (m_acquire_task.joinable()) m_acquire_task.join();
   }
-  if (m_spi != nullptr) {
+  if (m_spi) {
     if (m_auto_configured) {
       m_spi->StopAuto();
     }
-  delete m_spi;
-  m_auto_configured = false;
-    if (m_auto_interrupt != nullptr) {
-      delete m_auto_interrupt;
-      m_auto_interrupt = nullptr;
-    }
-    m_spi = nullptr;
+    m_spi.reset();
+    m_auto_configured = false;
+    m_auto_interrupt.reset();
   }
   std::cout << "Finished cleaning up after the IMU driver." << std::endl;
 }
