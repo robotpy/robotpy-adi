@@ -285,8 +285,10 @@ private:
   bool m_auto_configured = false;
   SPI::Port m_spi_port;
   uint16_t m_calibration_time;
-  SPI *m_spi = nullptr;
-  DigitalInput *m_auto_interrupt = nullptr;
+  std::unique_ptr<SPI> m_spi;
+  std::unique_ptr<DigitalInput> m_auto_interrupt;
+  std::unique_ptr<DigitalInput> m_reset_in;
+  std::unique_ptr<DigitalOutput> m_imu_ready;
   
   std::thread m_acquire_task;
 
