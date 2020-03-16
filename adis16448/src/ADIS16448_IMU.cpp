@@ -367,7 +367,10 @@ void ADIS16448_IMU::Close() {
     m_auto_configured = false;
     m_auto_interrupt.reset();
   }
-  delete[] m_offset_buffer;
+  if (m_offset_buffer != nullptr) {
+    delete[] m_offset_buffer;
+    m_offset_buffer = nullptr;
+  }
   std::cout << "Finished cleaning up after the IMU driver." << std::endl;
 }
 
