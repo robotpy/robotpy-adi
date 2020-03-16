@@ -22,6 +22,11 @@
 #include <frc/WPIErrors.h>
 #include <hal/HAL.h>
 
+// Not always defined in cmath (not part of standard)
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
+
 /* Helpful conversion functions */
 static inline int32_t ToInt(const uint32_t *buf){
   return (int32_t)( (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3] );
