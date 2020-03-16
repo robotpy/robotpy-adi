@@ -9,6 +9,12 @@ RobotPy wrappers for the following Analog Devices products:
 .. note:: The RobotPy project is not associated with or endorsed by Analog
           Devices Inc. or FIRST Robotics Competition
 
+Documentation
+-------------
+
+* `Installation <https://robotpy.readthedocs.io/en/stable/install/adi.html>`_
+* `Python API Documentation <https://robotpy.readthedocs.io/projects/adi/en/stable/api.html>`_
+
 Authors
 -------
 
