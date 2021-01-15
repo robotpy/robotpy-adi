@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "robotpy-build>=2020.2.0,<2021.0.0",
-    "wpilib>=2020.3.2.0,<2021.0.0",
+    "robotpy-build>=2020.4.0,<2021.0.0",
+    "wpilib>=2021.1.2.0,<2022.0.0",
 ]
 
 [tool.robotpy-build]
@@ -19,7 +19,7 @@ base_package = "adis16470"
 
 [tool.robotpy-build.wrappers."adis16448"]
 name = "adis16448"
-depends = ["wpilibc", "wpiutil", "wpilib_core", "wpiHal", "ntcore"]
+depends = ["wpilibc", "wpiutil", "wpilib_core", "wpimath_geometry", "wpimath_cpp", "wpiHal", "ntcore"]
 
 sources = [
     "adis16448/src/module.cpp",
@@ -43,7 +43,7 @@ generate = [
 
 [tool.robotpy-build.wrappers."adis16470"]
 name = "adis16470"
-depends = ["wpilibc", "wpiutil", "wpilib_core", "wpiHal", "ntcore"]
+depends = ["wpilibc", "wpiutil", "wpilib_core", "wpimath_geometry", "wpimath_cpp", "wpiHal", "ntcore"]
 
 sources = [
     "adis16470/src/module.cpp",
@@ -63,5 +63,5 @@ author_email = "robotpy@googlegroups.com"
 url = "https://github.com/robotpy-adi"
 license = "MIT"
 install_requires = [
-    "wpilib>=2020.3.2.0,<2021.0.0",
+    "wpilib>=2021.1.2.0,<2022.0.0",
 ]
