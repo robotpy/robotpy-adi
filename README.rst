@@ -1,6 +1,10 @@
 robotpy-adi
 ===========
 
+.. warning:: As of the 2022 season, support for ADIS16448/ADIS16470 is now
+             directly in WPILib and is not distributed as a separate module
+             anymore!
+
 RobotPy wrappers for the following Analog Devices products:
 
 * ADIS16448
